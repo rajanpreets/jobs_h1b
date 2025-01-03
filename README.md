@@ -5,17 +5,20 @@
 **Advanced-RAG-LangGraph** is an advanced web application that implements a powerful Retrieval-Augmented Generation (RAG) pipeline using LangGraph. It combines the flexibility of **Streamlit** for an interactive user interface, **ChromaDB** as a vector database for efficient document retrieval, and **Tavily** for online search capabilities. This repository extends the traditional RAG framework with additional flows for robust error handling and reducing hallucinations in generated answers.
 
 ---
+![image](https://github.com/user-attachments/assets/5208de57-1a05-4801-95cb-db550186c67e)
 
 ## Features
 
 - **Document Upload and Embedding**:
   - Upload text files directly through the web interface.
   - Automatically converts the content into vector embeddings and stores them in **ChromaDB** for fast and accurate retrieval.
+![image](https://github.com/user-attachments/assets/c68deec8-5e8f-45bd-9d7e-c20ea8ceed54)
 
 - **Interactive Q&A**:
   - Ask questions about the uploaded document's content.
   - If the answer exists in the document, it is retrieved from the vector store.
   - The application queries online sources via **Tavily**if the answer is not found.
+![image](https://github.com/user-attachments/assets/37b0b543-1db2-4a1e-bb6e-2361da2617c1)
 
 - **Enhanced Retrieval-Augmented Generation (RAG)**:
   - Uses **LangGraph**, offering advanced features beyond traditional RAG implementations.
@@ -23,8 +26,12 @@
     - Fall back to alternative sources if the answers generated are inadequate.
     - Detect and address hallucinations to ensure reliable responses.
 
+![graph](https://github.com/user-attachments/assets/12ba0825-5568-4aa0-9343-9bd3744b169f)
+
 - **Tracing and Debugging**:
   - Integrates with **LangSmith** for tracing and debugging the LangGraph workflows.
+
+![image](https://github.com/user-attachments/assets/660ed12a-17a3-4866-9aab-d40bec172954)
 
 ---
 
@@ -96,15 +103,16 @@
 ---
 ## Workflow Diagram
 
+![graph](https://github.com/user-attachments/assets/12ba0825-5568-4aa0-9343-9bd3744b169f)
 ---
 ## Screenshots
 
 1. Document Upload Section
-
+![image](https://github.com/user-attachments/assets/c68deec8-5e8f-45bd-9d7e-c20ea8ceed54)
 2. Q&A Interaction
-
+![image](https://github.com/user-attachments/assets/37b0b543-1db2-4a1e-bb6e-2361da2617c1)
 3. LangSmith Tracing
-
+![image](https://github.com/user-attachments/assets/660ed12a-17a3-4866-9aab-d40bec172954)
 ---
 ## Future Enhancements
 

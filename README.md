@@ -1,6 +1,6 @@
 
 ---
-# Advanced-RAG-LangGraph
+# 🔎 Advanced-RAG-LangGraph
 
 **Advanced-RAG-LangGraph** is an advanced web application that implements a powerful Retrieval-Augmented Generation (RAG) pipeline using LangGraph. It combines the flexibility of **Streamlit** for an interactive user interface, **ChromaDB** as a vector database for efficient document retrieval, and **Tavily** for online search capabilities. This repository extends the traditional RAG framework with additional flows for robust error handling and reducing hallucinations in generated answers.
 

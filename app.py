@@ -23,7 +23,7 @@ FILE_UPLOAD_TYPE = ".txt"
 
 PINECONE_API_KEY= "pcsk_33nocf_MNBHp89MAgmA8PcTWoxrH91Lm99MZd1D9DDcpV5YtxaLT82Bc4tKfwaDTJjDRi1"
 PINECONE_ENV= "us-east-1"
-PINECONE_INDEX="my-rag-index"
+INDEX_NAME="my-rag-index"
 GROQ_API_KEY="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"
 
 # Validate API keys

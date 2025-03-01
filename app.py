@@ -20,10 +20,11 @@ PAGE_ICON = "🔍"
 FILE_UPLOAD_PROMPT = "Upload your Text file here"
 FILE_UPLOAD_TYPE = ".txt"
 
-PINECONE_API_KEY="pcsk_33nocf_MNBHp89MAgmA8PcTWoxrH91Lm99MZd1D9DDcpV5YtxaLT82Bc4tKfwaDTJjDRi1"
-PINECONE_ENV= "us-east-1"
-INDEX_NAME="my-rag-index"
-GROQ_API_KEY= "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"
+# Fetch API keys from environment variables
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENV = os.getenv("PINECONE_ENV")
+INDEX_NAME = os.getenv("INDEX_NAME")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Validate API keys
 if not all([PINECONE_API_KEY, PINECONE_ENV, INDEX_NAME, GROQ_API_KEY]):

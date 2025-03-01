@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 import streamlit as st
 from langchain.text_splitter import CharacterTextSplitter
-from langchain_pinecone import Pinecone
+from pinecone import Pinecone
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from chains.document_relevance import document_relevance
@@ -20,18 +20,21 @@ PAGE_ICON = "🔍"
 FILE_UPLOAD_PROMPT = "Upload your Text file here"
 FILE_UPLOAD_TYPE = ".txt"
 
-
-PINECONE_API_KEY= "pcsk_33nocf_MNBHp89MAgmA8PcTWoxrH91Lm99MZd1D9DDcpV5YtxaLT82Bc4tKfwaDTJjDRi1"
-PINECONE_ENV= "us-east-1"
-INDEX_NAME="my-rag-index"
-GROQ_API_KEY="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"
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENV = os.getenv("PINECONE_ENV")
+INDEX_NAME = os.getenv("INDEX_NAME")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Validate API keys
 if not all([PINECONE_API_KEY, PINECONE_ENV, INDEX_NAME, GROQ_API_KEY]):
     st.error("Missing API keys. Please check your .env file.")
 
-# Setting up Pinecone Index
-pinecone_db = Pinecone(index_name=INDEX_NAME, api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
+# Initialize Pinecone
+pc = Pinecone(api_key=PINECONE_API_KEY)
+if INDEX_NAME in pc.list_indexes():
+    index = pc.Index(INDEX_NAME)
+else:
+    st.error(f"Error: Index '{INDEX_NAME}' does not exist. Please create it in Pinecone.")
 
 # MiniLLM for embeddings
 embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
@@ -49,13 +52,30 @@ def handle_file_upload(user_file):
     documents = [user_file.read().decode()]
     splitter = CharacterTextSplitter.from_tiktoken_encoder(chunk_size=200, chunk_overlap=30)
     doc_splits = splitter.create_documents(documents)
-    pinecone_db.from_documents(doc_splits, embedding_function)
+    
+    vectors = []
+    for i, doc in enumerate(doc_splits):
+        vectors.append({
+            "id": f"doc_{i}",
+            "values": embedding_function.embed_query(doc.page_content),
+            "metadata": {"text": doc.page_content}
+        })
+    
+    index.upsert(vectors=vectors, namespace="documents")
     st.success("Embeddings successfully inserted into Pinecone!")
-    return pinecone_db.as_retriever()
+    return index
 
 def retrieve(state: GraphState):
     question = state["question"]
-    documents = retriever.invoke(question)
+    question_embedding = embedding_function.embed_query(question)
+    response = index.query(
+        namespace="documents",
+        vector=question_embedding,
+        top_k=5,
+        include_values=True,
+        include_metadata=True
+    )
+    documents = [doc["metadata"]["text"] for doc in response["matches"]]
     return {"documents": documents, "question": question}
 
 def evaluate(state: GraphState):
@@ -63,7 +83,7 @@ def evaluate(state: GraphState):
     documents = state["documents"]
     filtered_docs = []
     for document in documents:
-        response = evaluate_docs.invoke({"question": question, "document": document.page_content})
+        response = evaluate_docs.invoke({"question": question, "document": document})
         if response.score.lower() == "yes":
             filtered_docs.append(document)
     return {"documents": filtered_docs, "question": question}

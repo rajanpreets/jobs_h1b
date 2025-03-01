@@ -12,6 +12,7 @@ from chains.question_relevance import question_relevance
 from state import GraphState
 from langgraph.graph import END, StateGraph
 
+
 # Load environment variables
 load_dotenv()
 
@@ -38,7 +39,7 @@ else:
     st.error(f"Error: Index '{INDEX_NAME}' does not exist. Please create it in Pinecone.")
 
 # MiniLLM for embeddings
-embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2",device="cpu")
 
 # Initialize Groq Chat Model
 chat_model = ChatGroq(model="llama3-8b-8192", temperature=0, api_key=GROQ_API_KEY)

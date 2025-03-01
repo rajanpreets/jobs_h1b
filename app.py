@@ -3,7 +3,7 @@ import streamlit as st
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_pinecone import Pinecone
 from langchain.embeddings import HuggingFaceEmbeddings
-from langchain.chat_models import ChatGroq
+from langchain_groq import ChatGroq
 from chains.document_relevance import document_relevance
 from chains.evaluate import evaluate_docs
 from chains.generate_answer import generate_chain

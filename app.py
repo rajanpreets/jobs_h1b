@@ -19,26 +19,27 @@ st.set_page_config(page_title="Advanced RAG with Pinecone", page_icon="🔍")
 # Load environment variables
 load_dotenv()
 
-
-
 # API keys
-PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
-INDEX_NAME = os.getenv("INDEX_NAME")
-PINECONE_ENV = os.getenv("PINECONE_ENV")
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY") or "pcsk_33nocf_MNBHp89MAgmA8PcTWoxrH91Lm99MZd1D9DDcpV5YtxaLT82Bc4tKfwaDTJjDRi1"
+INDEX_NAME = "rajan"  # Ensure this is correct
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Validate API keys
-if not all([PINECONE_API_KEY, PINECONE_ENV, INDEX_NAME, GROQ_API_KEY]):
+if not all([PINECONE_API_KEY, INDEX_NAME, GROQ_API_KEY]):
     st.error("Missing API keys. Please check your .env file.")
     st.stop()
 
 # Initialize Pinecone
 pc = Pinecone(api_key=PINECONE_API_KEY)
-if INDEX_NAME in pc.list_indexes():
-    index = pc.Index(rajan)
-else:
+
+# Ensure the index exists before using it
+available_indexes = [idx["name"] for idx in pc.list_indexes()]
+if INDEX_NAME not in available_indexes:
     st.error(f"Error: Index '{INDEX_NAME}' does not exist. Please create it in Pinecone.")
     st.stop()
+
+# Initialize the Pinecone index
+index = pc.Index(INDEX_NAME)  # ✅ Correct way to access the index
 
 # ✅ Using SentenceTransformer directly to avoid HuggingFaceEmbeddings issue
 embedding_model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2", device="cpu")

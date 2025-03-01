@@ -1,4 +1,5 @@
 from dotenv import load_dotenv
+import os
 import streamlit as st
 from langchain.text_splitter import CharacterTextSplitter
 from langchain_pinecone import Pinecone
@@ -11,6 +12,7 @@ from chains.question_relevance import question_relevance
 from state import GraphState
 from langgraph.graph import END, StateGraph
 
+# Load environment variables
 load_dotenv()
 
 PAGE_TITLE = "Advanced RAG with Pinecone"
@@ -18,15 +20,24 @@ PAGE_ICON = "🔍"
 FILE_UPLOAD_PROMPT = "Upload your Text file here"
 FILE_UPLOAD_TYPE = ".txt"
 
-PINECONE_API_KEY = "your_pinecone_api_key"
-PINECONE_ENV = "your_pinecone_environment"
-INDEX_NAME = "your_pinecone_index"
+# Read environment variables
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+PINECONE_ENV = os.getenv("PINECONE_ENVIRONMENT")
+INDEX_NAME = os.getenv("PINECONE_INDEX")
+GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+
+# Validate API keys
+if not all([PINECONE_API_KEY, PINECONE_ENV, INDEX_NAME, GROQ_API_KEY]):
+    st.error("Missing API keys. Please check your .env file.")
 
 # Setting up Pinecone Index
 pinecone_db = Pinecone(index_name=INDEX_NAME, api_key=PINECONE_API_KEY, environment=PINECONE_ENV)
 
 # MiniLLM for embeddings
 embedding_function = HuggingFaceEmbeddings(model_name="sentence-transformers/all-MiniLM-L6-v2")
+
+# Initialize Groq Chat Model
+chat_model = ChatGroq(model="llama3-8b-8192", temperature=0, api_key=GROQ_API_KEY)
 
 def setup_ui():
     st.set_page_config(page_title=PAGE_TITLE, page_icon=PAGE_ICON)
@@ -60,8 +71,7 @@ def evaluate(state: GraphState):
 def generate_answer(state: GraphState):
     question = state["question"]
     documents = state["documents"]
-    chat = ChatGroq()
-    solution = chat.invoke({"context": documents, "question": question})
+    solution = chat_model.invoke({"context": documents, "question": question})
     return {"documents": documents, "question": question, "solution": solution}
 
 def create_graph():
